@@ -121,6 +121,7 @@ namespace FF1RandomizerOnline.Controllers
 					ChanceToRun = true,
 					SpellBugs = true,
 					EnemyStatusAttackBug = true,
+					BlackBeltAbsorb = true,
 
 					ForcedPartyMembers = 1,
 					PriceScaleFactor = 3.0,
