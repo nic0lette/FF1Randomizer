@@ -63,6 +63,8 @@ namespace FF1RandomizerOnline.Controllers
 					EnemyScripts = true,
 					EnemySkillsSpells = true,
 					EnemyStatusAttacks = true,
+					EnemyFormationsUnrunnable = true,
+					EnemyFormationsSurprise = true,
 
 					OrdealsPillars = true,
 					TitansTrove = true,
@@ -111,6 +113,7 @@ namespace FF1RandomizerOnline.Controllers
 					IdentifyTreasures = true,
 					Dash = true,
 					BuyTen = true,
+					WaitWhenUnrunnable = false,
 
 					HouseMPRestoration = true,
 					WeaponStats = true,
