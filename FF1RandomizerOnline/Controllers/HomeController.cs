@@ -123,6 +123,7 @@ namespace FF1RandomizerOnline.Controllers
 					EnemyStatusAttackBug = true,
 					BlackBeltAbsorb = true,
 					EnemyElementalResistancesBug = true,
+					EnemySpellsTargetingAllies = true,
 
 					ForcedPartyMembers = 1,
 					PriceScaleFactor = 3.0,
