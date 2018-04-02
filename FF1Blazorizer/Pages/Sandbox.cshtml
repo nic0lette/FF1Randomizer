@@ -1,0 +1,34 @@
+﻿@page "/sandbox"
+
+<ul class="section nav nav-pills">
+	@foreach (Tab value in Enum.GetValues(typeof(Tab)))
+	{
+		<li class=@classes[(int)value]><a @onclick(() => SelectTab(value))>@value</a></li>
+	}
+</ul>
+
+@functions {
+
+	enum Tab
+	{
+		Shuffle = 0,
+		Fun = 1,
+		Bugs = 2
+	}
+
+	Tab tab = Tab.Shuffle;
+	string[] classes = new string[Enum.GetValues(typeof(Tab)).Length];
+
+	void SelectTab(Tab newTab)
+	{
+		classes[(int)tab] = "";
+		tab = newTab;
+		classes[(int)tab] = "active";
+	}
+
+	protected override void OnInit()
+	{
+		classes[0] = "active";
+	}
+
+}

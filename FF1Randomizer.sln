@@ -16,7 +16,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FF1Randomizer", "FF1Randomi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FF1RandomizerOnline", "FF1RandomizerOnline\FF1RandomizerOnline.csproj", "{597D1B94-E7BA-4798-B2E1-E45A0DC4B77C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.csproj", "{137A7AAB-F962-4988-88E6-363CF49A702A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox", "Sandbox\Sandbox.csproj", "{137A7AAB-F962-4988-88E6-363CF49A702A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FF1Blazorizer", "FF1Blazorizer\FF1Blazorizer.csproj", "{376FDE1E-590A-4001-87F5-5B2899CEB5D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,10 @@ Global
 		{137A7AAB-F962-4988-88E6-363CF49A702A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{137A7AAB-F962-4988-88E6-363CF49A702A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{137A7AAB-F962-4988-88E6-363CF49A702A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{376FDE1E-590A-4001-87F5-5B2899CEB5D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{376FDE1E-590A-4001-87F5-5B2899CEB5D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{376FDE1E-590A-4001-87F5-5B2899CEB5D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{376FDE1E-590A-4001-87F5-5B2899CEB5D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

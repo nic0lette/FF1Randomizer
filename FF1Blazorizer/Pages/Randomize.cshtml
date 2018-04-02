@@ -1,0 +1,61 @@
+﻿@page "/randomize"
+
+<h1>Randomize</h1>
+
+	<div class="row">
+		<div class="col-xs-12 col-md-5">
+            <div class="row"><div class="col-xs-12"><label asp-for="Seed" />Seed</div></div>
+            <div class="row">
+                <div class="col-xs-7"><input class="form-control" asp-for="Seed" type="text" oninput="validateSeed();" /></div>
+		        <div class="col-xs-5"><input class="btn btn-default" type="button" value="New Seed" onclick="newSeed();" /></div>
+            </div>
+        </div>
+		<div class="col-xs-12 col-md-7">
+            <div class="row"><div class="col-xs-12"><label for="Flags">Flags</label></div></div>
+            <div class="row">
+                <div class="col-xs-7">@flags.GetString()</div>
+		        <div class="col-xs-4"><input class="btn btn-default" type="button" value="Import..." v-on:click="importSeedFlags();" /></div>
+            </div>
+        </div>
+	</div>
+	<ul class="section nav nav-pills">
+		<li class="active"><a href="randomize#shuffle">Shuffle</a></li>
+        <li><a href="randomize#incentives">Incentives</a></li>
+        <li><a href="randomize#map">Map</a></li>
+		<li><a href="randomize#scale">Scale</a></li>
+        <li><a href="randomize#conveniences">Conveniences</a></li>
+		<li><a href="randomize#bug-fixes">Bug Fixes</a></li>
+		<li><a href="randomize#fun">Fun %</a></li>
+	</ul>
+	<div class="tab-content clearfix" style="height: 400px">
+		<div class="section tab-pane active" id="shuffle">
+			<div class="col-xs-4">
+				<div class="checkbox-cell"><input type="checkbox" @bind(flags.Treasures) /> <label>Treasures</label></div>
+				<div class="checkbox-cell" title="Bridge, Lute, Ship, Rod, Canoe, Cube, Bottle, Oxyale"><input v-model="NPCItems" type="checkbox" asp-for="Flags.NPCItems" /> <label asp-for="Flags.NPCItems">NPC Items</label> <small>(<a asp-area="" asp-controller="Home" asp-action="WhatsNew">2.0.0</a>)</small></div>
+				<div class="checkbox-cell" v-if="Treasures && NPCItems" title="King, Princess, Bikke, Sarda, Sage, Robot, Caravan, Fairy"><input class="indent" v-model="IncentivizeFreeNPCs" type="checkbox" asp-for="Flags.IncentivizeFreeNPCs" /> <label asp-for="Flags.IncentivizeFreeNPCs">Incentivize NPCs</label></div>
+				<div class="checkbox-cell" title="Crystal, Herb, Key, Canal, Chime, Xcalber"><input v-model="NPCFetchItems" type="checkbox" asp-for="Flags.NPCFetchItems" /> <label asp-for="Flags.NPCFetchItems">Fetch Quests</label> <small>(<a asp-area="" asp-controller="Home" asp-action="WhatsNew">2.0.0</a>)</small></div>
+				<div class="checkbox-cell" v-if="Treasures && NPCFetchItems" title="Astos, Matoya, Prince, Dwarves, Lefein"><input class="indent" v-model="IncentivizeFetchNPCs" type="checkbox" asp-for="Flags.IncentivizeFetchNPCs" /> <label asp-for="Flags.IncentivizeFetchNPCs">Incentivize NPCs</label></div>
+				<div class="checkbox-cell"></div>
+				<div class="checkbox-cell"><input v-model="Shops" type="checkbox" asp-for="Flags.Shops" /> <label asp-for="Flags.Shops"></label></div>
+				<div class="checkbox-cell"><input v-model="MagicShops" type="checkbox" asp-for="Flags.MagicShops" /> <label asp-for="Flags.MagicShops">Magic Shops</label></div>
+				<div class="checkbox-cell"><input v-model="MagicLevels" type="checkbox" asp-for="Flags.MagicLevels" /> <label asp-for="Flags.MagicLevels">Magic Levels</label></div>
+				<div class="checkbox-cell" v-if="MagicLevels"><input v-model="MagicPermissions" class="indent" type="checkbox" asp-for="Flags.MagicPermissions" /> <label asp-for="Flags.MagicPermissions">Keep Permissions</label></div>
+			</div>
+			<div class="col-xs-4">
+				<div class="checkbox-cell"><input v-model="EnemyScripts" type="checkbox" asp-for="Flags.EnemyScripts" /> <label asp-for="Flags.EnemyScripts">Enemy Scripts</label></div>
+				<div class="checkbox-cell"><input v-model="EnemySkillsSpells" type="checkbox" asp-for="Flags.EnemySkillsSpells" /> <label asp-for="Flags.EnemySkillsSpells">Enemy Skills/Spells</label></div>
+				<div class="checkbox-cell"><input v-model="EnemyStatusAttacks" type="checkbox" asp-for="Flags.EnemyStatusAttacks" /> <label asp-for="Flags.EnemyStatusAttacks">Enemy Status Attacks</label></div>
+				<div class="checkbox-cell"><input v-model="EnemyFormationsUnrunnable" type="checkbox" asp-for="Flags.EnemyFormationsUnrunnable" /> <label asp-for="Flags.EnemyFormationsUnrunnable">Enemy Unrunnable Formations</label></div>
+				<div class="checkbox-cell"><input v-model="EnemyFormationsSurprise" type="checkbox" asp-for="Flags.EnemyFormationsSurprise" /> <label asp-for="Flags.EnemyFormationsSurprise">Enemy Surprise Bonus</label></div>
+				<div class="checkbox-cell"><input v-model="EnemyFormationsFrequency" type="checkbox" asp-for="Flags.EnemyFormationsFrequency" /> <label asp-for="Flags.EnemyFormationsFrequency">Enemy Formations Frequency</label></div>
+				<div class="checkbox-cell"></div>
+				<div class="checkbox-cell"><input v-model="Rng" type="checkbox" asp-for="Flags.Rng" /> <label asp-for="Flags.Rng">RNG Table</label><br /></div>
+			</div>
+		</div>
+	</div>
+
+@functions {
+
+	Flags flags = new Flags();
+
+}
