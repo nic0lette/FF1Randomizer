@@ -124,6 +124,12 @@ namespace FF1Lib
 
 			var hp = BitConverter.ToUInt16(enemy, 4);
 			hp = (ushort)Min(Scale(hp, scale, 1.0, rng, increaseOnly), 0x7FFF);
+
+			// FIXME: This is not the right way to do it.
+			if (index == Enemy.Garland) {
+				hp = 1;
+			}
+
 			var hpBytes = BitConverter.GetBytes(hp);
 			Array.Copy(hpBytes, 0, enemy, 4, 2);
 
@@ -150,6 +156,10 @@ namespace FF1Lib
 			enemy[11] = (byte)Min(newHitPercent, 0xFF); // hit%
 			enemy[12] = (byte)Min(newStrength, 0xFF); // strength
 			enemy[13] = (byte)Min(newCrit, 0xFF); // critical%
+
+			if (index == Enemy.Garland) {
+				Console.WriteLine("Garland has {0} hp", hp);
+			}
 
 			Put(EnemyOffset + index * EnemySize, enemy);
 		}
@@ -269,6 +279,49 @@ namespace FF1Lib
 			byte firstLevelRequirement = Data[0x7C04B];
 			firstLevelRequirement = (byte)(firstLevelRequirement / multiplier);
 			Data[0x7C04B] = firstLevelRequirement;
+		}
+
+		public void EnableJumpToLevel(MT19337 rng)
+		{
+			var targetLevel = rng.Between(29, 43);
+			Console.WriteLine("Enabling jump to level {0}", targetLevel);
+
+			// The easiest way to do this without making incredible Exp fights
+			// is to change the level requirements to be ridiculously low. So
+			// let's do that.
+			var levelRequirementsBlob = Get(LevelRequirementsOffset, LevelRequirementsSize * LevelRequirementsCount);
+			var levelRequirementsBytes = levelRequirementsBlob.Chunk(3).Select(threeBytes => new byte[] { threeBytes[0], threeBytes[1], threeBytes[2], 0 }).ToList();
+			for (int i = 0; i < targetLevel; i++)
+			{
+				uint expReq = (uint) i + 1;
+				levelRequirementsBytes[i] = BitConverter.GetBytes(expReq);
+			}
+
+			Put(LevelRequirementsOffset, Blob.Concat(levelRequirementsBytes.Select(bytes => (Blob)new byte[] { bytes[0], bytes[1], bytes[2] })));
+
+			// A dirty, ugly, evil piece of code that sets the level requirement for level 2, even though that's already defined in the above table.
+			byte firstLevelRequirement = Data[0x7C04B];
+			firstLevelRequirement = (byte)(0x1);
+			Data[0x7C04B] = firstLevelRequirement;
+
+			// Lastly, just make sure Garland gives the necessary exp.
+			var enemyBlob = Get(EnemyOffset, EnemySize * EnemyCount);
+			var enemies = enemyBlob.Chunk(EnemySize);
+
+			var enemy = enemies[Enemy.Garland];
+			var exp = BitConverter.ToUInt16(enemy, 0);
+			var gold = BitConverter.ToUInt16(enemy, 2);
+
+			exp = (ushort)(targetLevel * 4);
+
+			var expBytes = BitConverter.GetBytes(exp);
+			var goldBytes = BitConverter.GetBytes(gold);
+			Array.Copy(expBytes, 0, enemy, 0, 2);
+			Array.Copy(goldBytes, 0, enemy, 2, 2);
+
+			enemyBlob = Blob.Concat(enemies);
+
+			Put(EnemyOffset, enemyBlob);
 		}
 	}
 }

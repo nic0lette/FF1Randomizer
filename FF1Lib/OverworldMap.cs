@@ -155,6 +155,14 @@ namespace FF1Lib
 				floorLocationRequirements[MapLocation.CastleOrdealsMaze] = new Tuple<MapLocation, AccessRequirement>(MapLocation.CastleOrdeals1, AccessRequirement.None);
 			}
 
+			if (true) {
+				MapEditsToApply.Add(AllTownsAtConeria);
+				_rom.SetNpc(MapId.ConeriaCastle2F, 4, ObjectId.Bahamut, 13, 5, true, true);
+
+				// Disable the Princess Warp back to Castle Coneria (wastes time!)
+				_rom.Put(0x392CA, Blob.FromHex("EAEAEA"));
+			}
+
 			ObjectiveNPCs = new Dictionary<ObjectId, MapLocation>
 			{
 				{ ObjectId.Bahamut, MapLocation.BahamutCave2 },
@@ -728,6 +736,16 @@ namespace FF1Lib
 				new MapEdit{X = 105, Y = 171, Tile = GrassTile},
 				new MapEdit{X = 106, Y = 171, Tile = CoastLeft}
 			};
+		public static List<MapEdit> AllTownsAtConeria =
+			new List<MapEdit>
+			{
+				new MapEdit{X = 151, Y = 161, Tile = 0x49},
+				new MapEdit{X = 154, Y = 160, Tile = 0x4a},
+				new MapEdit{X = 151, Y = 161, Tile = 0x4c},
+				new MapEdit{X = 154, Y = 161, Tile = 0x4d},
+				new MapEdit{X = 151, Y = 162, Tile = 0x4e},
+				new MapEdit{X = 154, Y = 162, Tile = 0x5a},
+			};
 		public static Dictionary<OverworldTeleportIndex, Palette> OverworldToPalette =
 			new Dictionary<OverworldTeleportIndex, Palette>
 			{
@@ -948,6 +966,15 @@ namespace FF1Lib
 		{
 			var compresedMap = GetCompressedMapRows();
 			var decompressedMap = DecompressMapRows(compresedMap);
+			for (var y = 0; y < decompressedMap.Count; ++y) {
+				var row = decompressedMap[y];
+				for (var x = 0; x < row.Count; ++x) {
+					var tile = row[x];
+					if (tile == 0x49) {
+						Console.WriteLine("Cornelia at {0}, {1}", x, y);
+					}
+				}
+			}
 			var editedMap = decompressedMap;
 			foreach (var mapEdit in MapEditsToApply)
 			{

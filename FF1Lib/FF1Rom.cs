@@ -477,6 +477,8 @@ namespace FF1Lib
 				NoDanMode();
 			}
 
+			EnableJumpToLevel(rng);
+
 			SetProgressiveScaleMode(flags.ProgressiveScaleMode);
 
 			// We have to do "fun" stuff last because it alters the RNG state.
