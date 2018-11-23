@@ -155,14 +155,6 @@ namespace FF1Lib
 				floorLocationRequirements[MapLocation.CastleOrdealsMaze] = new Tuple<MapLocation, AccessRequirement>(MapLocation.CastleOrdeals1, AccessRequirement.None);
 			}
 
-			if (true) {
-				MapEditsToApply.Add(AllTownsAtConeria);
-				_rom.SetNpc(MapId.ConeriaCastle2F, 4, ObjectId.Bahamut, 13, 5, true, true);
-
-				// Disable the Princess Warp back to Castle Coneria (wastes time!)
-				_rom.Put(0x392CA, Blob.FromHex("EAEAEA"));
-			}
-
 			ObjectiveNPCs = new Dictionary<ObjectId, MapLocation>
 			{
 				{ ObjectId.Bahamut, MapLocation.BahamutCave2 },
@@ -556,6 +548,31 @@ namespace FF1Lib
 			UpdateFullLocationRequirements();
 		}
 
+		public void EnableTofrRush(MT19337 rng) {
+			// Always include Corneria.
+			var townsToPlace = new List<byte> { CorneriaTown };
+			TownTiles.Remove(CorneriaTown);
+
+			// There are only 6 spots, and with 1 dedicated to Corneria,
+			// that means 5 other towns are accessible.
+			TownTiles.Shuffle(rng);
+			townsToPlace.AddRange(TownTiles.GetRange(0, 5));
+			townsToPlace.Sort();
+
+			// Create the actual town tiles.
+			var corneriaMapEdits = new List<MapEdit>();
+			for (var i = 0; i < CorneriaTiles.Count; ++i) {
+				var tile = CorneriaTiles[i];
+				corneriaMapEdits.Add(new MapEdit { X = tile.X, Y = tile.Y, Tile = townsToPlace[i] });
+			}
+
+			MapEditsToApply.Add(corneriaMapEdits);
+			_rom.SetNpc(MapId.ConeriaCastle2F, 4, ObjectId.Bahamut, 13, 5, true, true);
+
+			// Disable the Princess Warp back to Castle Coneria (wastes time!)
+			_rom.Put(0x392CA, Blob.FromHex("EAEAEA"));
+		}
+
 		private void UpdateFullLocationRequirements()
 		{
 			// Flatten into one Dictionary
@@ -661,6 +678,27 @@ namespace FF1Lib
 		public const byte DockBottomMid = 0x78;
 		public const byte DockRightMid = 0x1F;
 		public const byte CoastLeft = 0x16;
+		public const byte CorneriaTown = 0x49;
+		public const byte PravokaTown = 0x4a;
+		public const byte ElflandTown = 0x4c;
+		public const byte MelmondTown = 0x4d;
+		public const byte CrescentLakeTown = 0x4e;
+		public const byte GaiaTown = 0x5a;
+		public const byte OnracTown = 0x5d;
+		public const byte LefeinTown = 0x6d;
+
+		public static List<byte> TownTiles =
+			new List<byte>
+		{
+			CorneriaTown,
+			PravokaTown,
+			ElflandTown,
+			MelmondTown,
+			CrescentLakeTown,
+			GaiaTown,
+			OnracTown,
+			LefeinTown
+		};
 
 		public static List<MapEdit> OnracDock =
 			new List<MapEdit>
@@ -736,15 +774,15 @@ namespace FF1Lib
 				new MapEdit{X = 105, Y = 171, Tile = GrassTile},
 				new MapEdit{X = 106, Y = 171, Tile = CoastLeft}
 			};
-		public static List<MapEdit> AllTownsAtConeria =
+		public static List<MapEdit> CorneriaTiles =
 			new List<MapEdit>
 			{
-				new MapEdit{X = 151, Y = 161, Tile = 0x49},
-				new MapEdit{X = 154, Y = 160, Tile = 0x4a},
-				new MapEdit{X = 151, Y = 161, Tile = 0x4c},
-				new MapEdit{X = 154, Y = 161, Tile = 0x4d},
-				new MapEdit{X = 151, Y = 162, Tile = 0x4e},
-				new MapEdit{X = 154, Y = 162, Tile = 0x5a},
+				new MapEdit{X = 151, Y = 162, Tile = CorneriaTown},
+				new MapEdit{X = 154, Y = 162, Tile = CorneriaTown},
+				new MapEdit{X = 151, Y = 161, Tile = CorneriaTown},
+				new MapEdit{X = 154, Y = 161, Tile = CorneriaTown},
+				new MapEdit{X = 151, Y = 160, Tile = CorneriaTown},
+				new MapEdit{X = 154, Y = 160, Tile = CorneriaTown}
 			};
 		public static Dictionary<OverworldTeleportIndex, Palette> OverworldToPalette =
 			new Dictionary<OverworldTeleportIndex, Palette>
@@ -966,15 +1004,6 @@ namespace FF1Lib
 		{
 			var compresedMap = GetCompressedMapRows();
 			var decompressedMap = DecompressMapRows(compresedMap);
-			for (var y = 0; y < decompressedMap.Count; ++y) {
-				var row = decompressedMap[y];
-				for (var x = 0; x < row.Count; ++x) {
-					var tile = row[x];
-					if (tile == 0x49) {
-						Console.WriteLine("Cornelia at {0}, {1}", x, y);
-					}
-				}
-			}
 			var editedMap = decompressedMap;
 			foreach (var mapEdit in MapEditsToApply)
 			{

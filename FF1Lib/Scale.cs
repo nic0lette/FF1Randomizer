@@ -56,6 +56,11 @@ namespace FF1Lib
 			{
 				var newPrice = Scale(prices[i] / multiplier, scale, 1, rng, increaseOnly);
 				prices[i] = (ushort)(flags.WrapPriceOverflow ? ((newPrice - 1) % 0xFFFF) + 1 : Min(newPrice, 0xFFFF));
+
+				// FIXME: Make everything essentially free so it's very fast to buy what one wants.
+				if (true) {
+					prices[i] = 1;
+				}
 			}
 			var questItemPrice = prices[(int)Item.Bottle];
 			// If we don't do this before checking for the item shop location factor, Ribbons and Shirts will end up being really cheap

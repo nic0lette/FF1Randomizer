@@ -229,6 +229,11 @@ namespace FF1Lib
 					{
 						ShuffleTreasures(rng, flags, incentivesData, shopItemLocation, overworldMap, teleporters);
 					}
+
+					if (true) {
+						overworldMap.EnableTofrRush(rng);
+					}
+
 					break;
 				}
 				catch (InsaneException)
@@ -477,7 +482,11 @@ namespace FF1Lib
 				NoDanMode();
 			}
 
-			EnableJumpToLevel(rng);
+			if (true)
+			{
+				EnableTofrRushItems();
+				EnableJumpToLevel(rng);
+			}
 
 			SetProgressiveScaleMode(flags.ProgressiveScaleMode);
 

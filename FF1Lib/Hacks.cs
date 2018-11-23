@@ -470,6 +470,14 @@ namespace FF1Lib
 			Data[initItemOffset + (int)Item.AirOrb] = 0x01;
 		}
 
+		public void EnableTofrRushItems() {
+			const int initItemOffset = 0x3020;
+			Data[initItemOffset + (int)Item.House] = 0x01;
+			Data[initItemOffset + (int)Item.Heal] = 99;
+			Data[initItemOffset + (int)Item.Pure] = 99;
+			Data[initItemOffset + (int)Item.Soft] = 99;
+		}
+
 		public void ChangeUnrunnableRunToWait()
 		{
 			// See Unrunnable.asm
