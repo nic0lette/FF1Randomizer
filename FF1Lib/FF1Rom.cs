@@ -362,6 +362,11 @@ namespace FF1Lib
 				EnableFreeOrbs();
 			}
 
+			if (flags.HousesFillHp)
+			{
+				EnableHousesFillHp();
+			}
+
 			if (flags.NoPartyShuffle)
 			{
 				DisablePartyShuffle();
