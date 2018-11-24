@@ -478,6 +478,11 @@ namespace FF1Lib
 			Data[initItemOffset + (int)Item.Soft] = 99;
 		}
 
+		public void EnableHousesFillHp()
+		{
+			Put(0x03b2c8, Blob.FromHex("20D2AB"));
+		}
+
 		public void ChangeUnrunnableRunToWait()
 		{
 			// See Unrunnable.asm
