@@ -499,11 +499,6 @@ namespace FF1Lib
 
 			PartyComposition(rng, flags);
 
-			if (true)
-			{
-				LowerMaxLevel(10);
-			}
-
 			if (flags.RecruitmentMode)
 			{
 				PubReplaceClinic(rng);
