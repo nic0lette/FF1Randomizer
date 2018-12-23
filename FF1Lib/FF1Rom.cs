@@ -8,12 +8,16 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using FF1Lib.Assembly;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace FF1Lib
 {
 	// ReSharper disable once InconsistentNaming
 	public partial class FF1Rom : NesRom
 	{
+		private JObject Overrides;
+
 		public const string Version = "2.5.0";
 
 		public const int RngOffset = 0x7F100;
@@ -83,6 +87,11 @@ namespace FF1Lib
 
 		public void Randomize(Blob seed, Flags flags)
 		{
+			Randomize(seed, flags, null);
+		}
+
+		public void Randomize(Blob seed, Flags flags, String overrideJson)
+		{
 			var rng = new MT19337(BitConverter.ToUInt32(seed, 0));
 
 			UpgradeToMMC3();
@@ -92,6 +101,10 @@ namespace FF1Lib
 			PermanentCaravan();
 			ShiftEarthOrbDown();
 			CastableItemTargeting();
+
+			Overrides = overrideJson != null
+				? JObject.Parse(overrideJson)
+				: JObject.Parse("{}");
 
 			TeleportShuffle teleporters = new TeleportShuffle();
 			var palettes = OverworldMap.GeneratePalettes(Get(OverworldMap.MapPaletteOffset, MapCount * OverworldMap.MapPaletteSize).Chunk(OverworldMap.MapPaletteSize));
@@ -485,6 +498,11 @@ namespace FF1Lib
 			}
 
 			PartyComposition(rng, flags);
+
+			if (true)
+			{
+				LowerMaxLevel(10);
+			}
 
 			if (flags.RecruitmentMode)
 			{
