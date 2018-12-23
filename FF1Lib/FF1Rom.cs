@@ -16,9 +16,7 @@ namespace FF1Lib
 	// ReSharper disable once InconsistentNaming
 	public partial class FF1Rom : NesRom
 	{
-		private JObject Overrides;
-
-		public const string Version = "2.5.0";
+		public const string Version = "2.6.0";
 
 		public const int RngOffset = 0x7F100;
 		public const int BattleRngOffset = 0x7FCF1;
@@ -33,6 +31,8 @@ namespace FF1Lib
 		public const int GoldItemOffset = 108; // 108 items before gold chests
 		public const int GoldItemCount = 68;
 		public static readonly List<int> UnusedGoldItems = new List<int> { 110, 111, 112, 113, 114, 116, 120, 121, 122, 124, 125, 127, 132, 158, 165, 166, 167, 168, 170, 171, 172 };
+
+		private JObject Overrides;
 
 		public void PutInBank(int bank, int address, Blob data)
 		{
