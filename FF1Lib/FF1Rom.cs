@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using FF1Lib.Assembly;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace FF1Lib
 {
@@ -94,6 +95,10 @@ namespace FF1Lib
 		{
 			var rng = new MT19337(BitConverter.ToUInt32(seed, 0));
 
+			// Apply the IPS before touching anything.
+			var HolidayIps = new IpsFile(HolidayPatch.Data);
+			HolidayIps.ApplyPatch(this);
+
 			UpgradeToMMC3();
 			MakeSpace();
 			EasterEggs();
@@ -102,15 +107,36 @@ namespace FF1Lib
 			ShiftEarthOrbDown();
 			CastableItemTargeting();
 
-			Overrides = overrideJson != null
-				? JObject.Parse(overrideJson)
-				: JObject.Parse("{}");
+			try
+			{
+				if (overrideJson.StartsWith("enc:"))
+				{
+					overrideJson = Encoding.UTF8.GetString(Convert.FromBase64String(overrideJson.Substring(4)));
+				}
+
+				Overrides = overrideJson != null
+					? JObject.Parse(overrideJson)
+					: JObject.Parse("{}");
+			}
+			catch (Exception)
+			{
+				Overrides = JObject.Parse("{}");
+			}
+
+			ReplaceStrings();
 
 			TeleportShuffle teleporters = new TeleportShuffle();
 			var palettes = OverworldMap.GeneratePalettes(Get(OverworldMap.MapPaletteOffset, MapCount * OverworldMap.MapPaletteSize).Chunk(OverworldMap.MapPaletteSize));
 			var overworldMap = new OverworldMap(this, flags, palettes, teleporters);
 			var maps = ReadMaps();
 			var shopItemLocation = ItemLocations.CaravanItemShop1;
+
+			if (!flags.ShardHunt)
+			{
+				// This flips it so ORBs that haven't been lit, are drawn as
+				// lit, to change it from lighting ORBs to hanging stockings.
+				Put(0x3B8CD - HeaderLength, Blob.FromHex("01"));
+			}
 
 			/*
 			flags.FreeAirship = true;
@@ -903,5 +929,91 @@ namespace FF1Lib
 			Put(BattleRngOffset, battleRng.SelectMany(blob => blob.ToBytes()).ToArray());
 		}
 
+		public void ReplaceStrings()
+		{
+			if (!Overrides.ContainsKey("Dialog")) return;
+
+			var dialogStrings = Overrides["Dialog"];
+			if (!dialogStrings.HasValues) return;
+
+			// Dialog strings start at 0x28210 and run through 0x2b496.
+			var textStart = 0x28210 - HeaderLength;
+			var textEnd = 0x2b496 - HeaderLength;
+			var textBytes = Get(textStart, textEnd - textStart).ToBytes();
+			var stringData = new List<Tuple<int, int>>();
+
+			var start = 0;
+			for (var i = 0; i < textBytes.Length; ++i)
+			{
+				if (textBytes[i] == 0)
+				{
+					stringData.Add(Tuple.Create<int, int>(start + textStart, i - start + 1));
+					start = i + 1;
+				}
+			}
+
+			foreach (var dialog in dialogStrings)
+			{
+				var stringNumber = ParseHexString(dialog["number"].ToString());
+				var text = dialog["text"].ToString();
+
+				//Console.WriteLine("Replace string " + stringNumber);
+				if (stringNumber >= 0x0 && stringNumber <= stringData.Count)
+				{
+					var encoded = FF1Text.TextToBytes(text);
+					if (encoded.Length <= stringData[stringNumber].Item2)
+					{
+						//var str = Get(stringData[stringNumber].Item1, stringData[stringNumber].Item2);
+						//Console.WriteLine("String {0}\n{1}", stringNumber.ToString("x2"), FF1Text.BytesToText(str));
+
+						Put(stringData[stringNumber].Item1, encoded);
+					}
+					else
+					{
+						Console.WriteLine("Cannot replace string {0} -- string too long {1} vs {2}",
+							stringNumber.ToString("x2"), encoded.Length, stringData[stringNumber].Item2);
+
+						var str = Get(stringData[stringNumber].Item1, stringData[stringNumber].Item2);
+						Console.WriteLine("String:\n" + FF1Text.BytesToText(str));
+					}
+				}
+			}
+		}
+
+		int ParseHexString(string hex)
+		{
+			hex = hex.ToLower();
+
+			var value = -1;
+			var valueValid = true;
+
+			var digits = new byte[hex.Length];
+			for (var i = 0; i < hex.Length; ++i)
+			{
+				var chr = hex[i];
+				if (chr >= '0' && chr <= '9')
+				{
+					digits[i] = (byte)(chr - '0');
+				}
+				else if (chr >= 'a' && chr <= 'f')
+				{
+					digits[i] = (byte)((chr - 'a') + 10);
+				}
+				else
+				{
+					valueValid = false;
+					break;
+				}
+			}
+
+			if (!valueValid) return -1;
+
+			value = 0;
+			foreach (var digit in digits)
+			{
+				value = (value * 16) + digit;
+			}
+			return value;
+		}
 	}
 }

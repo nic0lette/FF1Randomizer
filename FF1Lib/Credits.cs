@@ -106,6 +106,28 @@ namespace FF1Lib
 				"TELLING!!",
 				"",
 				"END.."
+			},
+			new [] //Xmas Special 1
+			{
+				"Welcome Xmas,",
+				"bring your cheer",
+				"Cheer to all Who",
+				"far and near.",
+				"Christmas Day is",
+				"in our grasps so",
+				"long as we have",
+				"hands to clasp."
+			},
+			new [] //Xmas Special 2
+			{
+				"Christmas Day",
+				"will always be,",
+				"just as long as",
+				"we have we.",
+				"Welcome Xmas,",
+				"while we stand",
+				"Heart to heart,",
+				"and hand to hand"
 			}
 		};
 
@@ -192,6 +214,17 @@ namespace FF1Lib
 				"",
 				"      YOU!",
 			},
+			new []
+				{
+				"",
+				" Holiday Story",
+				"      By",
+				"",
+				" a tiny fairy,",
+				"leggystarscream",
+				"  nic0lette",
+				""
+			},
 		};
 
 
@@ -263,7 +296,8 @@ namespace FF1Lib
 				FF1Text.TextToBytes("        ",     true, FF1Text.Delimiter.Empty), Blob.FromHex("101003B26004919900"),
 			};
 
-			pages.Add(FF1Text.TextToStory(VictoryMessages[rng.Between(0, VictoryMessages.Count - 1)]));
+			pages.Add(FF1Text.TextToStory(VictoryMessages[VictoryMessages.Count - 2]));
+			pages.Add(FF1Text.TextToStory(VictoryMessages[VictoryMessages.Count - 1]));
 			pages.Add(Blob.Concat(movementStats));
 			pages.Add(Blob.Concat(battleResults));
 			pages.Add(Blob.Concat(combatStats));

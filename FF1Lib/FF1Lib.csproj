@@ -57,10 +57,4 @@
     <PackageReference Include="RomUtilities" Version="2.2.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="DTETable.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

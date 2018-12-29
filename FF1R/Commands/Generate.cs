@@ -5,6 +5,7 @@ namespace FF1R.Commands
 
 	using FF1Lib;
 	using FFR.Common;
+	using System.IO;
 
 	[Command("generate", Description = "Randomize a Final Fantasy ROM")]
 	class Generate
@@ -38,6 +39,11 @@ namespace FF1R.Commands
 		[Option(Description = "Enable verbose output",
 			ShortName = "v")]
 		public bool Verbose { get; }
+
+		// Will take precedence over any flags defined by earlier options.
+		[Option("-f|--override <FILE>", Description = "Overrides to load into the randomizer",
+			ShortName = "O")]
+		public string Overrides { get; }
 
 		int OnExecute(IConsole console)
 		{
@@ -83,12 +89,25 @@ namespace FF1R.Commands
 				}
 			}
 
+			string overrideSettings = null;
+			if (Overrides != null)
+			{
+				try
+				{
+					overrideSettings = File.ReadAllText(Overrides);
+				}
+				catch (Exception)
+				{
+					overrideSettings = null;
+				}
+			}
+
 			var outFile = String.IsNullOrEmpty(OutFile)
 				? GenerateDefaultFilename(RomPath, settings)
 				: OutFile;
       
 			var rom = new FF1Rom(RomPath);
-			rom.Randomize(settings.Seed, settings.Flags);
+			rom.Randomize(settings.Seed, settings.Flags, overrideSettings);
 			rom.Save(outFile);
 
 			if (Verbose) {
