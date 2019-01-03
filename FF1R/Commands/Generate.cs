@@ -41,7 +41,7 @@ namespace FF1R.Commands
 		public bool Verbose { get; }
 
 		// Will take precedence over any flags defined by earlier options.
-		[Option("-f|--override <FILE>", Description = "Overrides to load into the randomizer",
+		[Option("-O|--override <FILE>", Description = "Overrides to load into the randomizer",
 			ShortName = "O")]
 		public string Overrides { get; }
 

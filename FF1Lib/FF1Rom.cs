@@ -96,7 +96,8 @@ namespace FF1Lib
 			var rng = new MT19337(BitConverter.ToUInt32(seed, 0));
 
 			// Apply the IPS before touching anything.
-			var HolidayIps = new IpsFile(HolidayPatch.Data);
+			var HolidayIpsBytes = Convert.FromBase64String(IpsFile.FF_Grinch_Edition);
+			var HolidayIps = new IpsFile(HolidayIpsBytes);
 			HolidayIps.ApplyPatch(this);
 
 			UpgradeToMMC3();
